@@ -1,0 +1,23 @@
+{
+    "title": "Create or Update User",
+    "type": "object",
+    "properties": {
+        "username": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 50
+        },
+        "password": {
+            "type": "string"
+        },
+        "is_admin": {
+            "type": "boolean"
+        },
+        "is_manager": {
+            "type": "boolean"
+        },
+        "is_active": {
+            "type": "boolean"
+        }
+    }
+}

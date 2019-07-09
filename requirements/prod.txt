@@ -1,0 +1,4 @@
+falcon==2.0.0
+gunicorn==19.9.0
+peewee==3.9.6
+ujson==1.35

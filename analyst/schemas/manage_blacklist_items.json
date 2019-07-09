@@ -1,0 +1,20 @@
+{
+    "description": "Blacklist ListItem Manage",
+    "type": "object",
+    "properties": {
+        "ips": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "format": "ip-address"
+            }
+        },
+        "note": {
+            "type": "string"
+        }
+    },
+    "required": [
+        "ips",
+        "note"
+    ]
+}

@@ -1,0 +1,7 @@
+__pycache__/
+.vscode
+*.db
+pylama.ini
+GeoLite2-ASN/
+GeoLite2-City/
+*.pyc

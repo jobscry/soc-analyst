@@ -1,0 +1,11 @@
+---
+  version: 1.0
+  db:
+    file_path: './etc/analyst/database.db'
+  gunicorn:
+    bind: 0.0.0.0:8000
+    workers: 1
+    timeout: 30
+    reload: true
+  asn_path: './etc/analyst/GeoLite2-ASN/GeoLite2-ASN.mmdb'
+  geo_path: './etc/analyst/GeoLite2-City/GeoLite2-City.mmdb'
