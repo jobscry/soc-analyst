@@ -20,9 +20,9 @@ class IPListBaseResource(BaseResource):
 class IPListItemResource(IPListBaseResource):
     def on_get(self, req: falcon.Request, resp: falcon.Response, ip_list_name: str):
         try:
-            blacklist = IPList.get(name=ip_list_name.lower())
+            ip_list = IPList.get(name=ip_list_name.lower())
             resp.media = {
-                "iplist": blacklist.to_dict(
+                "iplist": ip_list.to_dict(
                     fields=[
                         "name",
                         "description",
@@ -35,12 +35,12 @@ class IPListItemResource(IPListBaseResource):
         except DoesNotExist:
             raise falcon.HTTPNotFound()
 
-    @validate(load_schema("manage_blacklist_items"))
+    @validate(load_schema("manage_ip_list_items"))
     def on_post(self, req: falcon.Request, resp: falcon.Response, ip_list_name: str):
         super().on_post(req, resp)
 
         try:
-            blacklist = IPList.get(name=ip_list_name.lower())
+            ip_list = IPList.get(name=ip_list_name.lower())
 
             ips = req.media.get("ips")
             existing_ips = ListItem.select().where(ListItem.ip.in_(ips))
@@ -57,7 +57,7 @@ class IPListItemResource(IPListBaseResource):
                 .join(IPListItem)
                 .join(IPList)
                 .where(
-                    (IPList.id == blacklist.id), (ListItem.ip.in_(existing_ips_list))
+                    (IPList.id == ip_list.id), (ListItem.ip.in_(existing_ips_list))
                 )
             )
             list_ips_list = [x.ip for x in list(list_ips)]
@@ -66,18 +66,18 @@ class IPListItemResource(IPListBaseResource):
             note = req.media.get("notes", None)
             if note:
                 note = notes.strip()
-            blacklist_items = []
+            ip_list_items = []
             for list_item in ListItem.select().where(
                 ListItem.ip.in_(new_list_ips_list)
             ):
-                blacklist_items.append(
-                    (blacklist, list_item, req.context["user"], note)
+                ip_list_items.append(
+                    (ip_list, list_item, req.context["user"], note)
                 )
 
             IPListItem.insert_many(
-                blacklist_items,
+                ip_list_items,
                 fields=[
-                    IPListItem.blacklist,
+                    IPListItem.iplist,
                     IPListItem.ip,
                     IPListItem.added_by,
                     IPListItem.note,
@@ -96,7 +96,7 @@ class IPListItemResource(IPListBaseResource):
         except DoesNotExist:
             raise falcon.HTTPNotFound()
 
-    @validate(load_schema("delete_blacklist_items"))
+    @validate(load_schema("delete_iplist_items"))
     def on_delete(self, req: falcon.Request, resp: falcon.Response, ip_list_name: str):
         try:
             ip_list = IPList.get(name=ip_list_name.lower())
@@ -108,7 +108,7 @@ class IPListItemResource(IPListBaseResource):
             deleted = (
                 IPListItem.delete()
                 .where(
-                    (IPListItem.blacklist == ip_list), (IPListItem.ip.in_(remove_ips))
+                    (IPListItem.iplist == ip_list), (IPListItem.ip.in_(remove_ips))
                 )
                 .execute()
             )
@@ -138,9 +138,9 @@ class IPListResource(IPListBaseResource):
             resp.media = {"iplists": list(iplist)}
         else:
             try:
-                blacklist = IPList.get(name=ip_list_name.lower())
+                iplist = IPList.get(name=ip_list_name.lower())
                 resp.media = {
-                    "iplist": blacklist.to_dict(
+                    "iplist": iplist.to_dict(
                         fields=[
                             "name",
                             "description",
@@ -153,22 +153,22 @@ class IPListResource(IPListBaseResource):
             except DoesNotExist:
                 raise falcon.HTTPNotFound()
 
-    @validate(load_schema("create_blacklist"))
+    @validate(load_schema("create_iplist"))
     def on_post(
         self, req: falcon.Request, resp: falcon.Response, ip_list_name: str = None
     ):
         super().on_post(req, resp)
         try:
-            blacklist = IPList(
+            iplist = IPList(
                 name=req.media.get("name"),
                 description=req.media.get("description", None),
                 created_by=req.context["user"],
             )
-            blacklist.save()
+            iplist.save()
             resp.status = falcon.HTTP_201
             resp.media = {
                 "status": "Success",
-                "message": "Successfully, created blacklist.",
+                "message": "Successfully, created iplist.",
             }
         except IntegrityError:
             raise falcon.HTTPBadRequest("Bad Request", "List with name already exists.")
