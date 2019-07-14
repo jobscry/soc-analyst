@@ -6,7 +6,7 @@ from analyst.resources import BaseResource
 
 
 class TokensResource(BaseResource):
-    def on_post(self, req: falcon.Request, resp: falcon.Response, username: str):
+    def on_put(self, req: falcon.Request, resp: falcon.Response, username: str):
         try:
             user = User.get(username=username)
 
