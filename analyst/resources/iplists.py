@@ -153,7 +153,7 @@ class IPListResource(IPListBaseResource):
             except DoesNotExist:
                 raise falcon.HTTPNotFound()
 
-    @validate(load_schema("create_iplist"))
+    @validate(load_schema("create_ip_list"))
     def on_post(
         self, req: falcon.Request, resp: falcon.Response, ip_list_name: str = None
     ):
