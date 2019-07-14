@@ -6,26 +6,6 @@ from tests import client, superuser
 
 from analyst.models.iplist import IPList, IPListItem, ListItem
 from analyst.models.user import User
-from analyst.resources.iplists import IPListBaseResource
-
-
-def test_iplistbaseresource():
-    class User:
-        def __init__(self, is_admin=True, is_manager=True):
-            self.is_admin = is_admin
-            self.is_manager = is_manager
-
-    class Req:
-        def __init__(self, is_admin=True, is_manager=True):
-            self.context = {"user": User(is_admin, is_manager)}
-
-    req = Req(False, False)
-    resource = IPListBaseResource()
-    with pytest.raises(HTTPBadRequest):
-        resource.on_post(req, None)
-
-    req = Req(True, False)
-    resource.on_post(req, None)
 
 
 def test_iplistresource_list_on_get(client, superuser):

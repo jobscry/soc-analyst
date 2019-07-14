@@ -1,0 +1,15 @@
+{
+    "description": "Update IP List",
+    "type": "object",
+    "properties": {
+        "description": {
+            "type": "string"
+        },
+        "is_active": {
+            "type": "boolean"
+        },
+        "is_public": {
+            "type": "boolean"
+        }
+    }
+}

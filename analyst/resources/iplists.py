@@ -9,15 +9,7 @@ from analyst.resources import BaseResource
 from analyst.schemas import load_schema
 
 
-class IPListBaseResource(BaseResource):
-    def on_post(self, req: falcon.Request, resp: falcon.Response, *args, **kwargs):
-        if not (req.context["user"].is_admin or req.context["user"].is_manager):
-            raise falcon.HTTPBadRequest(
-                "Bad Request", "Insufficient priviledges for function."
-            )
-
-
-class IPListItemResource(IPListBaseResource):
+class IPListItemResource:
     def on_get(self, req: falcon.Request, resp: falcon.Response, ip_list_name: str):
         try:
             ip_list = IPList.get(name=ip_list_name)
@@ -37,8 +29,10 @@ class IPListItemResource(IPListBaseResource):
 
     @validate(load_schema("manage_ip_list_items"))
     def on_post(self, req: falcon.Request, resp: falcon.Response, ip_list_name: str):
-        super().on_post(req, resp)
-
+        if not (req.context["user"].is_admin or req.context["user"].is_manager):
+            raise falcon.HTTPBadRequest(
+                "Bad Request", "Insufficient priviledges for function."
+            )
         try:
             ip_list = IPList.get(name=ip_list_name)
 
@@ -94,6 +88,10 @@ class IPListItemResource(IPListBaseResource):
 
     @validate(load_schema("delete_ip_list_items"))
     def on_delete(self, req: falcon.Request, resp: falcon.Response, ip_list_name: str):
+        if not (req.context["user"].is_admin or req.context["user"].is_manager):
+            raise falcon.HTTPBadRequest(
+                "Bad Request", "Insufficient priviledges for function."
+            )
         try:
             ip_list = IPList.get(name=ip_list_name)
 
@@ -113,7 +111,7 @@ class IPListItemResource(IPListBaseResource):
             raise falcon.HTTPNotFound
 
 
-class IPListResource(IPListBaseResource):
+class IPListResource:
     def on_get(
         self, req: falcon.Request, resp: falcon.Response, ip_list_name: str = None
     ):
@@ -150,7 +148,10 @@ class IPListResource(IPListBaseResource):
     def on_post(
         self, req: falcon.Request, resp: falcon.Response, ip_list_name: str = None
     ):
-        super().on_post(req, resp)
+        if not (req.context["user"].is_admin or req.context["user"].is_manager):
+            raise falcon.HTTPBadRequest(
+                "Bad Request", "Insufficient priviledges for function."
+            )
         try:
             iplist = IPList(
                 name=req.media.get("name"),
@@ -168,3 +169,23 @@ class IPListResource(IPListBaseResource):
         except IntegrityError:
             raise falcon.HTTPBadRequest("Bad Request", "List with name already exists.")
 
+    @validate(load_schema("update_ip_list"))
+    def on_put(
+        self, req: falcon.Request, resp: falcon.Response, ip_list_name: str = None
+    ):
+        if not (req.context["user"].is_admin or req.context["user"].is_manager):
+            raise falcon.HTTPBadRequest(
+                "Bad Request", "Insufficient priviledges for function."
+            )
+        try:
+            ip_list = IPList.get(name=ip_list_name)
+
+            for k in ("description", "is_active", "is_public"):
+                if k in req.media:
+                    setattr(ip_list, k, req.media.get(k))
+            ip_list.save()
+
+            resp.media = {"status": "Success", "Message": "Updated IP List"}
+
+        except DoesNotExist:
+            raise falcon.HTTPNotFound()
