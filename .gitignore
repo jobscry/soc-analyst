@@ -6,3 +6,4 @@ GeoLite2-ASN/
 GeoLite2-City/
 *.pyc
 *.code-workspace
+.coverage
