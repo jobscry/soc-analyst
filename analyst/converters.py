@@ -4,10 +4,11 @@ from typing import Pattern, Union
 
 from falcon.routing.converters import BaseConverter
 
-DEFAULT_LOWERCASE_ALPHA_NUM_RE = re.compile(r'[a-zA-Z0-9\-_]{3,}')
+DEFAULT_LOWERCASE_ALPHA_NUM_RE = re.compile(r"^[a-zA-Z0-9\-_]{3,}$")
+
 
 class LowerCaseAlphaNumConverter(BaseConverter):
-    def __init__(self, pattern: Pattern=DEFAULT_LOWERCASE_ALPHA_NUM_RE):
+    def __init__(self, pattern: Pattern = DEFAULT_LOWERCASE_ALPHA_NUM_RE):
         self.pattern = pattern
 
     def convert(self, value: str) -> Union[str, None]:
@@ -15,8 +16,9 @@ class LowerCaseAlphaNumConverter(BaseConverter):
             return None
         return value.lower()
 
+
 class IPV4Converter(BaseConverter):
-    def convert(self, value:str) -> Union[str, None]:
+    def convert(self, value: str) -> Union[str, None]:
         try:
             ip = IPv4Address(value)
             return str(ip)
