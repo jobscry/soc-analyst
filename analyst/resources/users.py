@@ -28,7 +28,7 @@ class UsersResource(BaseResource):
 
         else:
             try:
-                user = User.get(username=username.lower())
+                user = User.get(username=username)
                 if (
                     not req.context["user"].is_admin
                     and req.conext["user"].id != user.id
@@ -77,7 +77,7 @@ class UsersResource(BaseResource):
                 raise falcon.HTTPBadRequest("Bad Request", "Username already exists.")
         else:
             try:
-                user = User.get(username=username.lower())
+                user = User.get(username=username)
                 if (
                     not req.context["user"].is_admin
                     and req.conext["user"].id != user.id
@@ -126,7 +126,7 @@ class UsersResource(BaseResource):
             raise falcon.HTTPNotFound()
 
         try:
-            user = User.get(username=username.lower())
+            user = User.get(username=username)
         except DoesNotExist:
             raise falcon.HTTPNotFound()
 

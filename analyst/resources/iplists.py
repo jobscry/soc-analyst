@@ -20,7 +20,7 @@ class IPListBaseResource(BaseResource):
 class IPListItemResource(IPListBaseResource):
     def on_get(self, req: falcon.Request, resp: falcon.Response, ip_list_name: str):
         try:
-            ip_list = IPList.get(name=ip_list_name.lower())
+            ip_list = IPList.get(name=)
             resp.media = {
                 "iplist": ip_list.to_dict(
                     fields=[
@@ -40,7 +40,7 @@ class IPListItemResource(IPListBaseResource):
         super().on_post(req, resp)
 
         try:
-            ip_list = IPList.get(name=ip_list_name.lower())
+            ip_list = IPList.get(name=ip_list_name)
 
             ips = req.media.get("ips")
             existing_ips = ListItem.select().where(ListItem.ip.in_(ips))
@@ -99,7 +99,7 @@ class IPListItemResource(IPListBaseResource):
     @validate(load_schema("delete_iplist_items"))
     def on_delete(self, req: falcon.Request, resp: falcon.Response, ip_list_name: str):
         try:
-            ip_list = IPList.get(name=ip_list_name.lower())
+            ip_list = IPList.get(name=ip_list_name)
 
             ips = req.media.get("ips", None)
 
@@ -138,7 +138,7 @@ class IPListResource(IPListBaseResource):
             resp.media = {"iplists": list(iplist)}
         else:
             try:
-                iplist = IPList.get(name=ip_list_name.lower())
+                iplist = IPList.get(name=ip_list_name)
                 resp.media = {
                     "iplist": iplist.to_dict(
                         fields=[

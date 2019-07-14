@@ -84,7 +84,7 @@ class User(BaseModel):
         Used by authentication middleware.  Will not return a user if `is_active` is False.
         """
         try:
-            user = User.get(username=username.strip().lower(), is_active=True)
+            user = User.get(username=username, is_active=True)
             if user.verify_password(password):
                 return user
         except peewee.DoesNotExist:
@@ -118,7 +118,7 @@ def create_user(
     Returns: String, new user's new token.
     """
     u = User(
-        username=username.strip().lower(),
+        username=username,
         is_admin=is_admin,
         is_manager=is_manager,
         is_active=is_active,
