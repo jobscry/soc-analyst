@@ -17,6 +17,3 @@ class BaseModel(peewee.Model):
             if k in fields:
                 ret_dict[k] = getattr(self, k)
         return ret_dict
-
-    def translate_json_input(self, json_dict):
-        raise NotImplementedError
