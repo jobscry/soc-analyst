@@ -13,8 +13,8 @@ class ASNResource(BaseResource):
     @validate(load_schema("asn"))
     def on_post(self, req: falcon.Request, resp: falcon.Response, ip: str = None):
         results = list()
-        with geoip2.database.Reader(self.asn_path) as reader:
-            for ip in req.media.get('ips', None):
+        with geoip2.database.Reader(self.asn_path) as reader:  # pragma: no cover
+            for ip in req.media.get("ips", None):
                 try:
                     lookup = reader.asn(ip)
                     results.append(
@@ -24,12 +24,8 @@ class ASNResource(BaseResource):
                             "asn_org": lookup.autonomous_system_organization,
                         }
                     )
-                except geoip2.errors.AddressNotFoundError:
+                except geoip2.errors.AddressNotFoundError:  # pragma: no cover
                     raise falcon.HTTPBadRequest("Bad Request", "No response for query.")
-                except ValueError:
-                    raise falcon.HTTPBadRequest(
-                        "Bad Request", "Not a valid IPv4 address."
-                    )
 
         resp.media = results
 
@@ -45,7 +41,6 @@ class ASNResource(BaseResource):
                     "asn_number": lookup.autonomous_system_number,
                     "asn_org": lookup.autonomous_system_organization,
                 }
-            except geoip2.errors.AddressNotFoundError:
+            except geoip2.errors.AddressNotFoundError:  # pragma: no cover
                 raise falcon.HTTPBadRequest("Bad Request", "No response for query.")
-            except ValueError:
-                raise falcon.HTTPBadRequest("Bad Request", "Not a valid IPv4 address.")
+
