@@ -123,6 +123,7 @@ class IPListResource(IPListBaseResource):
                 IPList.description,
                 IPList.created_by,
                 IPList.is_active,
+                IPList.is_public,
                 IPList.created_on,
             ).dicts()
 
@@ -137,6 +138,7 @@ class IPListResource(IPListBaseResource):
                             "description",
                             "created_by",
                             "is_active",
+                            "is_public",
                             "created_on",
                         ]
                     )
@@ -153,6 +155,8 @@ class IPListResource(IPListBaseResource):
             iplist = IPList(
                 name=req.media.get("name"),
                 description=req.media.get("description", None),
+                is_active=req.media.get("is_active", True),
+                is_public=req.media.get("is_public", True),
                 created_by=req.context["user"],
             )
             iplist.save()

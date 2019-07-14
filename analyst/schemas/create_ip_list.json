@@ -10,6 +10,12 @@
         },
         "description": {
             "type": "string"
+        },
+        "is_active": {
+            "type": "boolean"
+        },
+        "is_public": {
+            "type": "boolean"
         }
     },
     "required": [

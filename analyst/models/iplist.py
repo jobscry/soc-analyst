@@ -13,6 +13,7 @@ class IPList(BaseModel):
     name = peewee.CharField(max_length=255, unique=True)
     description = peewee.TextField(null=True)
     is_active = peewee.BooleanField(default=True)
+    is_public = peewee.BooleanField(default=True)
     created_by = peewee.ForeignKeyField(User)
 
 
