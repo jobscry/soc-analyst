@@ -8,7 +8,7 @@ class RequireJSONMiddleware:
     Ensure each requests is expecting a JSON response.  Check HTTP Header `Accept`
     """
 
-    def process_request(self, req, resp):
+    def process_request(self, req: falcon.Request, resp: falcon.Response):
         if not req.client_accepts_json:
             raise falcon.HTTPNotAcceptable(
                 "This API only accepts responses encoded as JSON."
