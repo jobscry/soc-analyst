@@ -46,7 +46,7 @@ class AnalystService(falcon.API):
 
         # Build routes
         self.add_route(f"/api/{self.cfg.version}/init", users.InitResource())
-        self.add_route(f"/api/{self.cfg.version}/user", users.UsersResource())
+        self.add_route(f"/api/{self.cfg.version}/users", users.UsersResource())
         self.add_route(
             f"/api/{self.cfg.version}/users/{{username:lowercase_alpha_num}}",
             users.UsersResource(),
