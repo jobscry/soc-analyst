@@ -30,14 +30,12 @@ class User(BaseModel):
 
         Returns nothing.
 
-        If `can_login` is True, sets the password for the current user to `password`.
-
         Password is salted, hashed with `pbkdf2_sha256` via passlib.
 
         This does not save the user.
         """
 
-        self.password = pbkdf2_sha256.hash(password)
+        self.password = pbkdf2_sha256.hash(password)  # pragma: no cover
 
     def verify_password(self, password: str) -> bool:
         """
@@ -97,7 +95,7 @@ class User(BaseModel):
 
         Returns: String, new token.
         """
-        self.token = secrets.token_urlsafe(API_KEY_BYTES)
+        self.token = secrets.token_urlsafe(API_KEY_BYTES)  # pragma: no cover
 
 
 def create_user(
@@ -106,7 +104,7 @@ def create_user(
     is_admin: bool = False,
     is_manager: bool = False,
     is_active: bool = True,
-) -> str:
+) -> str:  # pragma: no cover
     """
     Create User
 
@@ -118,10 +116,7 @@ def create_user(
     Returns: String, new user's new token.
     """
     u = User(
-        username=username,
-        is_admin=is_admin,
-        is_manager=is_manager,
-        is_active=is_active,
+        username=username, is_admin=is_admin, is_manager=is_manager, is_active=is_active
     )
 
     u.set_password(password)
