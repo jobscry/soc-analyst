@@ -1,5 +1,5 @@
 {
-    "title": "Create or Update User",
+    "title": "Create User",
     "type": "object",
     "properties": {
         "username": {
@@ -19,5 +19,9 @@
         "is_active": {
             "type": "boolean"
         }
-    }
+    },
+    "required": [
+        "username",
+        "password"
+    ]
 }

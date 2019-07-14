@@ -1,0 +1,18 @@
+{
+    "title": "Update User",
+    "type": "object",
+    "properties": {
+        "password": {
+            "type": "string"
+        },
+        "is_admin": {
+            "type": "boolean"
+        },
+        "is_manager": {
+            "type": "boolean"
+        },
+        "is_active": {
+            "type": "boolean"
+        }
+    }
+}
