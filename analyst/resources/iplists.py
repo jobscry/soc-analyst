@@ -11,7 +11,7 @@ from analyst.schemas import load_schema
 
 class IPListBaseResource(BaseResource):
     def on_post(self, req: falcon.Request, resp: falcon.Response, *args, **kwargs):
-        if not (req.context["user"].is_admin or req.conext["user"].is_manager):
+        if not (req.context["user"].is_admin or req.context["user"].is_manager):
             raise falcon.HTTPBadRequest(
                 "Bad Request", "Insufficient priviledges for function."
             )
@@ -56,28 +56,24 @@ class IPListItemResource(IPListBaseResource):
                 ListItem.select()
                 .join(IPListItem)
                 .join(IPList)
-                .where(
-                    (IPList.id == ip_list.id), (ListItem.ip.in_(existing_ips_list))
-                )
+                .where((IPList.id == ip_list.id), (ListItem.ip.in_(existing_ips_list)))
             )
             list_ips_list = [x.ip for x in list(list_ips)]
             new_list_ips_list = list(set(ips) - set(list_ips_list))
 
-            note = req.media.get("notes", None)
+            note = req.media.get("note", None)
             if note:
-                note = notes.strip()
+                note = note.strip()
             ip_list_items = []
             for list_item in ListItem.select().where(
                 ListItem.ip.in_(new_list_ips_list)
             ):
-                ip_list_items.append(
-                    (ip_list, list_item, req.context["user"], note)
-                )
+                ip_list_items.append((ip_list, list_item, req.context["user"], note))
 
             IPListItem.insert_many(
                 ip_list_items,
                 fields=[
-                    IPListItem.iplist,
+                    IPListItem.ip_list,
                     IPListItem.ip,
                     IPListItem.added_by,
                     IPListItem.note,
@@ -107,16 +103,11 @@ class IPListItemResource(IPListBaseResource):
 
             deleted = (
                 IPListItem.delete()
-                .where(
-                    (IPListItem.iplist == ip_list), (IPListItem.ip.in_(remove_ips))
-                )
+                .where((IPListItem.ip_list == ip_list), (IPListItem.ip.in_(remove_ips)))
                 .execute()
             )
 
-            resp.media = {
-                "count_removed": deleted,
-                "requested_ips": ips,
-            }
+            resp.media = {"count_removed": deleted, "requested_ips": ips}
 
         except DoesNotExist:
             raise falcon.HTTPNotFound
