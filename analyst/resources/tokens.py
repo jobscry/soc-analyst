@@ -1,5 +1,4 @@
 import falcon
-
 from peewee import DoesNotExist
 
 from analyst.models.user import User
@@ -19,7 +18,7 @@ class TokensResource(BaseResource):
             user.generate_token()
             user.save()
 
-            resp.media = { "token": user.token}
+            resp.media = {"token": user.token}
 
         except DoesNotExist:
             raise falcon.HTTPNotFound()
@@ -33,7 +32,7 @@ class TokensResource(BaseResource):
                     "Forbidden", "Insufficient privileges for operation."
                 )
 
-            resp.media = { "token": user.token}
+            resp.media = {"token": user.token}
 
         except DoesNotExist:
             raise falcon.HTTPNotFound()
