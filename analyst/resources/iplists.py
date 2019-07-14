@@ -20,7 +20,7 @@ class IPListBaseResource(BaseResource):
 class IPListItemResource(IPListBaseResource):
     def on_get(self, req: falcon.Request, resp: falcon.Response, ip_list_name: str):
         try:
-            ip_list = IPList.get(name=)
+            ip_list = IPList.get(name=ip_list_name)
             resp.media = {
                 "iplist": ip_list.to_dict(
                     fields=[
