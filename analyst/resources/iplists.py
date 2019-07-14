@@ -96,7 +96,7 @@ class IPListItemResource(IPListBaseResource):
         except DoesNotExist:
             raise falcon.HTTPNotFound()
 
-    @validate(load_schema("delete_iplist_items"))
+    @validate(load_schema("delete_ip_list_items"))
     def on_delete(self, req: falcon.Request, resp: falcon.Response, ip_list_name: str):
         try:
             ip_list = IPList.get(name=ip_list_name)
