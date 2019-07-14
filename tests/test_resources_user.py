@@ -38,7 +38,7 @@ def test_user_on_get_found_not_admin_ok(client, superuser):
     assert "user" in resp.json
 
 
-def test_user_on_gest_list_not_admin(client, superuser):
+def test_user_on_get_list_not_admin(client, superuser):
     u = create_user("test-user", "test-password")
     resp = client.simulate_get(
         "/api/test/users", headers={"Authorization": f"Token {u}"}
@@ -46,7 +46,7 @@ def test_user_on_gest_list_not_admin(client, superuser):
     assert resp.status_code == 403
 
 
-def test_user_on_gest_list_is_admin(client, superuser):
+def test_user_on_get_list_is_admin(client, superuser):
     u = create_user("test-user", "test-password")
     resp = client.simulate_get(
         "/api/test/users", headers={"Authorization": f"Token {superuser}"}
