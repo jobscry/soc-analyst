@@ -24,14 +24,14 @@ class UsersResource(BaseResource):
                 User.created_on,
             )
 
-            resp.media = {"user": list(user.dicts())}
+            resp.media = {"users": list(user.dicts())}
 
         else:
             try:
                 user = User.get(username=username)
                 if (
                     not req.context["user"].is_admin
-                    and req.conext["user"].id != user.id
+                    and req.context["user"].id != user.id
                 ):
                     raise falcon.HTTPForbidden(
                         "Forbidden", "Insufficient privileges for operation."
