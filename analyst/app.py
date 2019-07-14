@@ -1,6 +1,10 @@
 import falcon
-from falcon_auth import (BasicAuthBackend, FalconAuthMiddleware,
-                         MultiAuthBackend, TokenAuthBackend)
+from falcon_auth import (
+    BasicAuthBackend,
+    FalconAuthMiddleware,
+    MultiAuthBackend,
+    TokenAuthBackend,
+)
 
 from analyst.converters import IPV4Converter, LowerCaseAlphaNumConverter
 from analyst.middleware.cors import CORSComponentMiddleware
@@ -23,15 +27,16 @@ class AnalystService(falcon.API):
                 CORSComponentMiddleware(),
                 RequireJSONMiddleware(),
                 auth_middleware,
-            ],
-            media_type="application/json",
+            ]
         )
 
         handlers = falcon.media.Handlers({"application/json": DateTimeJSONHandler()})
         self.resp_options.media_handlers.update(handlers)
-        self.resp_options.default_media_type = "application/json",
-        self.router_options.converters['ipv4_addr'] = IPV4Converter
-        self.router_options.converters['lowercase_alpha_num'] = LowerCaseAlphaNumConverter
+        self.resp_options.default_media_type = "application/json"
+        self.router_options.converters["ipv4_addr"] = IPV4Converter
+        self.router_options.converters[
+            "lowercase_alpha_num"
+        ] = LowerCaseAlphaNumConverter
 
         self.cfg = cfg
 
@@ -43,31 +48,35 @@ class AnalystService(falcon.API):
         self.add_route(f"/api/{self.cfg.version}/init", users.InitResource())
         self.add_route(f"/api/{self.cfg.version}/user", users.UsersResource())
         self.add_route(
-            f"/api/{self.cfg.version}/users/{{username:lowercase_alpha_num}}", users.UsersResource()
+            f"/api/{self.cfg.version}/users/{{username:lowercase_alpha_num}}",
+            users.UsersResource(),
         )
         self.add_route(
-            f"/api/{self.cfg.version}/tokens/{{username:lowercase_alpha_num}}", tokens.TokensResource()
+            f"/api/{self.cfg.version}/tokens/{{username:lowercase_alpha_num}}",
+            tokens.TokensResource(),
         )
         self.add_route(
             f"/api/{self.cfg.version}/asn", asn.ASNResource(self.cfg.asn_path)
         )
         self.add_route(
-            f"/api/{self.cfg.version}/asn/{{ip:ipv4_addr}}", asn.ASNResource(self.cfg.asn_path)
+            f"/api/{self.cfg.version}/asn/{{ip:ipv4_addr}}",
+            asn.ASNResource(self.cfg.asn_path),
         )
         self.add_route(
             f"/api/{self.cfg.version}/geo", geo.GeoResource(self.cfg.geo_path)
         )
         self.add_route(
-            f"/api/{self.cfg.version}/geo/{{ip:ipv4_addr}}", geo.GeoResource(self.cfg.geo_path)
+            f"/api/{self.cfg.version}/geo/{{ip:ipv4_addr}}",
+            geo.GeoResource(self.cfg.geo_path),
+        )
+        self.add_route(f"/api/{self.cfg.version}/iplists", iplists.IPListResource())
+        self.add_route(
+            f"/api/{self.cfg.version}/iplists/{{ip_list_name:lowercase_alpha_num}}",
+            iplists.IPListResource(),
         )
         self.add_route(
-            f"/api/{self.cfg.version}/iplists", iplists.IPListResource()
-        )
-        self.add_route(
-            f"/api/{self.cfg.version}/iplists/{{ip_list_name:lowercase_alpha_num}}", iplists.IPListResource()
-        )
-        self.add_route(
-            f"/api/{self.cfg.version}/iplists/{{ip_list_name:lowercase_alpha_num}}/items", iplists.IPListItemResource()
+            f"/api/{self.cfg.version}/iplists/{{ip_list_name:lowercase_alpha_num}}/items",
+            iplists.IPListItemResource(),
         )
 
     def start(self):
