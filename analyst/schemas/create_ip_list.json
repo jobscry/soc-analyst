@@ -5,7 +5,8 @@
         "name": {
             "type": "string",
             "minLength": 3,
-            "maxLength": 50
+            "maxLength": 50,
+            "pattern": "^[a-z0-9\\-_]{3,}$"
         },
         "description": {
             "type": "string"
