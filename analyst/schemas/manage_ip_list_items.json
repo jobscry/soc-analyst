@@ -1,5 +1,5 @@
 {
-    "description": "Blacklist ListItem Manage",
+    "description": "Mange IP List",
     "type": "object",
     "properties": {
         "ips": {
