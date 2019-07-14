@@ -30,7 +30,7 @@ class IPListItemResource:
     @validate(load_schema("manage_ip_list_items"))
     def on_post(self, req: falcon.Request, resp: falcon.Response, ip_list_name: str):
         if not (req.context["user"].is_admin or req.context["user"].is_manager):
-            raise falcon.HTTPBadRequest(
+            raise falcon.HTTPUnauthorized(
                 "Bad Request", "Insufficient priviledges for function."
             )
         try:
@@ -89,7 +89,7 @@ class IPListItemResource:
     @validate(load_schema("delete_ip_list_items"))
     def on_delete(self, req: falcon.Request, resp: falcon.Response, ip_list_name: str):
         if not (req.context["user"].is_admin or req.context["user"].is_manager):
-            raise falcon.HTTPBadRequest(
+            raise falcon.HTTPUnauthorized(
                 "Bad Request", "Insufficient priviledges for function."
             )
         try:
@@ -149,7 +149,7 @@ class IPListResource:
         self, req: falcon.Request, resp: falcon.Response, ip_list_name: str = None
     ):
         if not (req.context["user"].is_admin or req.context["user"].is_manager):
-            raise falcon.HTTPBadRequest(
+            raise falcon.HTTPUnauthorized(
                 "Bad Request", "Insufficient priviledges for function."
             )
         try:
@@ -174,7 +174,7 @@ class IPListResource:
         self, req: falcon.Request, resp: falcon.Response, ip_list_name: str = None
     ):
         if not (req.context["user"].is_admin or req.context["user"].is_manager):
-            raise falcon.HTTPBadRequest(
+            raise falcon.HTTPUnauthorized(
                 "Bad Request", "Insufficient priviledges for function."
             )
         try:
@@ -189,3 +189,22 @@ class IPListResource:
 
         except DoesNotExist:
             raise falcon.HTTPNotFound()
+
+    def on_delete(
+        self, req: falcon.Request, resp: falcon.Response, ip_list_name: str = None
+    ):
+        if not (req.context["user"].is_admin or req.context["user"].is_manager):
+            raise falcon.HTTPUnauthorized(
+                "Bad Request", "Insufficient priviledges for function."
+            )
+        try:
+            ip_list = IPList.get(name=ip_list_name)
+
+            IPListItem.delete().where(IPListItem.ip_list == ip_list).execute()
+            ip_list.delete_instance()
+
+            resp.media = {"status": "Success", "message": "List deleted."}
+
+        except DoesNotExist:
+            raise falcon.HTTPNotFound()
+
