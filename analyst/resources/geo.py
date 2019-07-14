@@ -26,12 +26,8 @@ class GeoResource(BaseResource):
                             "country": lookup.country.name,
                         }
                     )
-                except geoip2.errors.AddressNotFoundError:
+                except geoip2.errors.AddressNotFoundError:  # pragma: no cover
                     raise falcon.HTTPBadRequest("Bad Request", "No response for query.")
-                except ValueError:
-                    raise falcon.HTTPBadRequest(
-                        "Bad Request", "Not a valid IPv4 address."
-                    )
 
         resp.media = results
 
@@ -49,7 +45,6 @@ class GeoResource(BaseResource):
                     "lon": lookup.location.longitude,
                     "country": lookup.country.name,
                 }
-            except geoip2.errors.AddressNotFoundError:
+            except geoip2.errors.AddressNotFoundError:  # pragma: no cover
                 raise falcon.HTTPBadRequest("Bad Request", "No response for query.")
-            except ValueError:
-                raise falcon.HTTPBadRequest("Bad Request", "Not a valid IPv4 address.")
+
