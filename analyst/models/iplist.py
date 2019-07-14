@@ -18,6 +18,6 @@ class IPList(BaseModel):
 
 class IPListItem(BaseModel):
     ip = peewee.ForeignKeyField(ListItem)
-    blacklist = peewee.ForeignKeyField(IPList)
+    ip_list = peewee.ForeignKeyField(IPList)
     added_by = peewee.ForeignKeyField(User)
     note = peewee.CharField(null=True)
