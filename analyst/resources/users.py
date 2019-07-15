@@ -26,29 +26,17 @@ class UsersResource(BaseResource):
             resp.media = {"users": list(user.dicts())}
 
         else:
-            try:
-                user = User.get(username=username)
-                if (
-                    not req.context["user"].is_admin
-                    and req.context["user"].id != user.id
-                ):
-                    raise falcon.HTTPForbidden(
-                        "Forbidden", "Insufficient privileges for operation."
-                    )
+            user = User.get(User.username == username)
+            if not req.context["user"].is_admin and req.context["user"].id != user.id:
+                raise falcon.HTTPForbidden(
+                    "Forbidden", "Insufficient privileges for operation."
+                )
 
-                resp.media = {
-                    "user": user.to_dict(
-                        [
-                            "username",
-                            "is_active",
-                            "is_admin",
-                            "is_manager",
-                            "created_on",
-                        ]
-                    )
-                }
-            except DoesNotExist:
-                raise falcon.HTTPNotFound()
+            resp.media = {
+                "user": user.to_dict(
+                    ["username", "is_active", "is_admin", "is_manager", "created_on"]
+                )
+            }
 
     @check_permission(lambda user: user.is_admin)
     @validate(load_schema("create_user"))
@@ -68,51 +56,39 @@ class UsersResource(BaseResource):
 
     @validate(load_schema("update_user"))
     def on_put(self, req: falcon.Request, resp: falcon.Response, username: str = None):
-        try:
-            user = User.get(username=username)
-            if not req.context["user"].is_admin and req.context["user"].id != user.id:
-                raise falcon.HTTPForbidden(
-                    "Forbidden", "Insufficient privileges for operation."
-                )
+        user = User.get(User.username == username)
+        if not req.context["user"].is_admin and req.context["user"].id != user.id:
+            raise falcon.HTTPForbidden(
+                "Forbidden", "Insufficient privileges for operation."
+            )
 
-            is_admin = req.media.get("is_admin", None)
-            is_manager = req.media.get("is_manager", None)
-            is_active = req.media.get("is_active", None)
+        is_admin = req.media.get("is_admin", None)
+        is_manager = req.media.get("is_manager", None)
+        is_active = req.media.get("is_active", None)
 
-            if req.context["user"].id == user.id and (
-                is_admin is not None or is_manager is not None or is_active is not None
-            ):
-                raise falcon.HTTPForbidden(
-                    "Forbidden", "Can not modifiy own attributes."
-                )
+        if req.context["user"].id == user.id and (
+            is_admin is not None or is_manager is not None or is_active is not None
+        ):
+            raise falcon.HTTPForbidden("Forbidden", "Can not modifiy own attributes.")
 
-            password = req.media.get("password", None)
-            if password is not None:
-                user.set_password(password)
-            if is_admin is not None:
-                user.is_admin = is_admin
-            if is_manager is not None:
-                user.is_manager = is_manager
-            if is_active is not None:
-                user.is_active = is_active
+        password = req.media.get("password", None)
+        if password is not None:
+            user.set_password(password)
+        if is_admin is not None:
+            user.is_admin = is_admin
+        if is_manager is not None:
+            user.is_manager = is_manager
+        if is_active is not None:
+            user.is_active = is_active
 
-            user.save()
-            resp.media = {"status": "Success", "message": "User updated."}
-
-        except DoesNotExist:
-            raise falcon.HTTPNotFound()
+        user.save()
+        resp.media = {"status": "Success", "message": "User updated."}
 
     @check_permission(lambda user: user.is_admin)
     def on_delete(
         self, req: falcon.Request, resp: falcon.Response, username: str = None
     ):
-        if username is None:
-            raise falcon.HTTPNotFound()
-
-        try:
-            user = User.get(username=username)
-        except DoesNotExist:
-            raise falcon.HTTPNotFound()
+        user = User.get(User.username == username)
 
         if req.context["user"].id == user.id:
             raise falcon.HTTPBadRequest("Bad Request", "Can not delete self.")

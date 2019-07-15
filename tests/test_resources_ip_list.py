@@ -16,13 +16,6 @@ def test_iplistresource_list_on_get(client, superuser):
     assert "iplists" in resp.json
 
 
-def test_iplistresource_on_get_not_found(client, superuser):
-    resp = client.simulate_get(
-        "/api/test/iplists/notfound", headers={"Authorization": f"Token {superuser}"}
-    )
-    assert resp.status_code == 404
-
-
 def test_iplistresource_on_get_found(client, superuser):
     ip_list = IPList(name="test-list", created_by=User.get_by_token(superuser))
     ip_list.save()
@@ -65,23 +58,6 @@ def test_iplistresource_on_put_ok(client, superuser):
     assert resp.json["status"] == "Success"
 
 
-def test_iplistresource_on_put_not_found(client, superuser):
-    json = {"description": "test-list"}
-    resp = client.simulate_put(
-        "/api/test/iplists/not-found",
-        headers={"Authorization": f"Token {superuser}"},
-        json=json,
-    )
-    assert resp.status_code == 404
-
-
-def test_iplistresource_on_delete_not_found(client, superuser):
-    resp = client.simulate_delete(
-        "/api/test/iplists/test-list", headers={"Authorization": f"Token {superuser}"}
-    )
-    assert resp.status_code == 404
-
-
 def test_iplistresource_on_delete_ok(client, superuser):
     ip_list = IPList(name="test-list", created_by=User.get_by_token(superuser))
     ip_list.save()
@@ -92,14 +68,6 @@ def test_iplistresource_on_delete_ok(client, superuser):
     assert resp.json["status"] == "Success"
 
 
-def test_iplistitemresource_on_get_not_found(client, superuser):
-    resp = client.simulate_get(
-        "/api/test/iplists/notfound/items",
-        headers={"Authorization": f"Token {superuser}"},
-    )
-    assert resp.status_code == 404
-
-
 def test_iplistitemresource_on_get_found(client, superuser):
     ip_list = IPList(name="test-list", created_by=User.get_by_token(superuser))
     ip_list.save()
@@ -108,16 +76,6 @@ def test_iplistitemresource_on_get_found(client, superuser):
         headers={"Authorization": f"Token {superuser}"},
     )
     assert resp.status_code == 200
-
-
-def test_iplistitemresource_on_post_not_found(client, superuser):
-    json = {"ips": ["1.1.1.1", "9.9.9.9"], "note": "test note"}
-    resp = client.simulate_post(
-        "/api/test/iplists/notfound/items",
-        headers={"Authorization": f"Token {superuser}"},
-        json=json,
-    )
-    assert resp.status_code == 404
 
 
 def test_iplistitemresource_on_post_all_new(client, superuser):
@@ -186,16 +144,6 @@ def test_iplistitemresource_on_post_notes(client, superuser):
     ip = ListItem.get(ip="1.1.1.1")
     list_item = IPListItem.get(id=1)
     assert list_item.note == "test note"
-
-
-def test_iplistitemresource_on_delete_not_found(client, superuser):
-    json = {"ips": ["2.2.2.2"]}
-    resp = client.simulate_delete(
-        "/api/test/iplists/not-found/items",
-        headers={"Authorization": f"Token {superuser}"},
-        json=json,
-    )
-    assert resp.status_code == 404
 
 
 def test_iplistitemresource_on_delete_remove_none(client, superuser):

@@ -1,6 +1,8 @@
 from datetime import datetime
 from typing import Dict, List, Union
+
 import peewee
+from falcon import HTTPNotFound
 
 
 class BaseModel(peewee.Model):
@@ -17,3 +19,10 @@ class BaseModel(peewee.Model):
             if k in fields:
                 ret_dict[k] = getattr(self, k)
         return ret_dict
+
+    @classmethod
+    def get_or_404(cls, *expressions):
+        try:
+            return cls.get(*expressions)
+        except:
+            raise HTTPNotFound
