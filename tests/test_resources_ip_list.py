@@ -52,30 +52,6 @@ def test_iplistresource_on_post_bad(client, superuser):
     assert resp.status_code == 400
 
 
-def test_iplistresource_on_post_no_permission(client, superuser):
-    ip_list = IPList(name="test-list", created_by=User.get_by_token(superuser))
-    ip_list.save()
-    u = create_user("test-user", "test-password")
-    json = {"name": "test-list"}
-    resp = client.simulate_post(
-        "/api/test/iplists", headers={"Authorization": f"Token {u}"}, json=json
-    )
-    assert resp.status_code == 401
-
-
-def test_iplistresource_on_put_no_permission(client, superuser):
-    ip_list = IPList(name="test-list", created_by=User.get_by_token(superuser))
-    ip_list.save()
-    u = create_user("test-user", "test-password")
-    json = {"description": "test-list", "is_public": True}
-    resp = client.simulate_put(
-        "/api/test/iplists/test-list",
-        headers={"Authorization": f"Token {u}"},
-        json=json,
-    )
-    assert resp.status_code == 401
-
-
 def test_iplistresource_on_put_ok(client, superuser):
     ip_list = IPList(name="test-list", created_by=User.get_by_token(superuser))
     ip_list.save()
@@ -97,16 +73,6 @@ def test_iplistresource_on_put_not_found(client, superuser):
         json=json,
     )
     assert resp.status_code == 404
-
-
-def test_iplistresource_on_delete_no_permission(client, superuser):
-    ip_list = IPList(name="test-list", created_by=User.get_by_token(superuser))
-    ip_list.save()
-    u = create_user("test-user", "test-password")
-    resp = client.simulate_delete(
-        "/api/test/iplists/test-list", headers={"Authorization": f"Token {u}"}
-    )
-    assert resp.status_code == 401
 
 
 def test_iplistresource_on_delete_not_found(client, superuser):
@@ -222,31 +188,6 @@ def test_iplistitemresource_on_post_notes(client, superuser):
     assert list_item.note == "test note"
 
 
-def test_iplistitemresource_on_post_has_permissions(client, superuser):
-    ip_list = IPList(name="test-list", created_by=User.get_by_token(superuser))
-    ip_list.save()
-    json = {"ips": ["1.1.1.1"], "note": "test note "}
-    resp = client.simulate_post(
-        "/api/test/iplists/test-list/items",
-        headers={"Authorization": f"Token {superuser}"},
-        json=json,
-    )
-    assert resp.status_code == 201
-
-
-def test_iplistitemresource_on_post_no_permissions(client, superuser):
-    ip_list = IPList(name="test-list", created_by=User.get_by_token(superuser))
-    ip_list.save()
-    u = create_user("test-user", "test-password")
-    json = {"ips": ["1.1.1.1"], "note": "test note "}
-    resp = client.simulate_post(
-        "/api/test/iplists/test-list/items",
-        headers={"Authorization": f"Token {u}"},
-        json=json,
-    )
-    assert resp.status_code == 401
-
-
 def test_iplistitemresource_on_delete_not_found(client, superuser):
     json = {"ips": ["2.2.2.2"]}
     resp = client.simulate_delete(
@@ -318,24 +259,3 @@ def test_iplistitemresource_on_delete_remove_all(client, superuser):
     assert resp.status_code == 200
     assert resp.json["count_removed"] == 2
     assert IPListItem.select().where((IPListItem.ip_list == ip_list)).count() == 0
-
-
-def test_iplistitemresource_on_delete_not_permissions(client, superuser):
-    ip_list = IPList(name="test-list", created_by=User.get_by_token(superuser))
-    ip_list.save()
-    json = {"ips": ["1.1.1.1", "2.2.2.2"], "note": "test note"}
-    resp = client.simulate_post(
-        "/api/test/iplists/test-list/items",
-        headers={"Authorization": f"Token {superuser}"},
-        json=json,
-    )
-    u = create_user("test-user", "test-passwrd")
-    assert IPListItem.select().where((IPListItem.ip_list == ip_list)).count() == 2
-    json = {"ips": ["2.2.2.2"]}
-    resp = client.simulate_delete(
-        "/api/test/iplists/test-list/items",
-        headers={"Authorization": f"Token {u}"},
-        json=json,
-    )
-    assert resp.status_code == 401
-

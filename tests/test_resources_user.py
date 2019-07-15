@@ -61,7 +61,7 @@ def test_user_on_post_not_admin(client):
     resp = client.simulate_post(
         "/api/test/users", headers={"Authorization": f"Token {u}"}, json=json
     )
-    assert resp.status_code == 403
+    assert resp.status_code == 401
 
 
 def test_user_on_post_is_admin(client, superuser):
@@ -147,7 +147,7 @@ def test_user_on_delete_is_not_admin(client, superuser):
     resp = client.simulate_delete(
         "/api/test/users/superuser", headers={"Authorization": f"Token {u}"}
     )
-    assert resp.status_code == 403
+    assert resp.status_code == 401
 
 
 def test_user_on_delete_is_admin_not_found(client, superuser):

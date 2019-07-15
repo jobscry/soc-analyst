@@ -3,7 +3,7 @@ from falcon.media.validators.jsonschema import validate
 from peewee import DoesNotExist, IntegrityError
 
 from analyst.models.user import User, create_user
-from analyst.resources import BaseResource
+from analyst.resources import BaseResource, check_permission
 from analyst.schemas import load_schema
 
 
@@ -50,12 +50,9 @@ class UsersResource(BaseResource):
             except DoesNotExist:
                 raise falcon.HTTPNotFound()
 
+    @check_permission(lambda user: user.is_admin)
     @validate(load_schema("create_user"))
     def on_post(self, req: falcon.Request, resp: falcon.Response, username: str = None):
-        if not req.context["user"].is_admin:
-            raise falcon.HTTPForbidden(
-                "Forbidden", "Insufficient privileges for operation."
-            )
         username = req.media.get("username", None)
         password = req.media.get("password", None)
         is_admin = req.media.get("is_admin", False)
@@ -105,13 +102,10 @@ class UsersResource(BaseResource):
         except DoesNotExist:
             raise falcon.HTTPNotFound()
 
+    @check_permission(lambda user: user.is_admin)
     def on_delete(
         self, req: falcon.Request, resp: falcon.Response, username: str = None
     ):
-        if not req.context["user"].is_admin:
-            raise falcon.HTTPForbidden(
-                "Forbidden", "Insufficient privileges for operation."
-            )
         if username is None:
             raise falcon.HTTPNotFound()
 
