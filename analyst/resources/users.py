@@ -26,7 +26,7 @@ class UsersResource(BaseResource):
             resp.media = {"users": list(user.dicts())}
 
         else:
-            user = User.get(User.username == username)
+            user = User.get_or_404(User.username == username)
             if not req.context["user"].is_admin and req.context["user"].id != user.id:
                 raise falcon.HTTPForbidden(
                     "Forbidden", "Insufficient privileges for operation."
@@ -56,7 +56,7 @@ class UsersResource(BaseResource):
 
     @validate(load_schema("update_user"))
     def on_put(self, req: falcon.Request, resp: falcon.Response, username: str = None):
-        user = User.get(User.username == username)
+        user = User.get_or_404(User.username == username)
         if not req.context["user"].is_admin and req.context["user"].id != user.id:
             raise falcon.HTTPForbidden(
                 "Forbidden", "Insufficient privileges for operation."
@@ -88,7 +88,7 @@ class UsersResource(BaseResource):
     def on_delete(
         self, req: falcon.Request, resp: falcon.Response, username: str = None
     ):
-        user = User.get(User.username == username)
+        user = User.get_or_404(User.username == username)
 
         if req.context["user"].id == user.id:
             raise falcon.HTTPBadRequest("Bad Request", "Can not delete self.")
